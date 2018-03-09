@@ -12,6 +12,7 @@ void qsort_(void *lineptr[], int left, int right,
             int (*comp)(void *, void *),
             int (*compmod)(int));
 int numcmp(char *, char *);
+int strcmp_ignore_case(char *, char *);
 int reverse(int);
 int noop(int);
 
@@ -20,6 +21,7 @@ int main(int argc, char *argv[])
     int nlines;
     int is_numeric = 0;
     int is_reverse = 0;
+    int is_fold = 0;
 
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] != '-') {
@@ -36,6 +38,9 @@ int main(int argc, char *argv[])
                 case 'r':
                     is_reverse = 1;
                     break;
+                case 'f':
+                    is_fold = 1;
+                    break;
                 default:
                     printf("invalid input flag\n");
                     return 1;
@@ -45,7 +50,7 @@ int main(int argc, char *argv[])
 
     if ((nlines = readlines(lineptr, MAXLINES)) >= 0) {
         qsort_((void **) lineptr, 0, nlines - 1, 
-            (int (*)(void *, void *))(is_numeric ? numcmp : strcmp),
+            (int (*)(void *, void *))(is_numeric ? numcmp : (is_fold ? strcmp_ignore_case : strcmp)),
             is_reverse ? reverse : noop);
         writelines(lineptr, nlines);
         return 0;
@@ -102,6 +107,43 @@ int numcmp(char *s1, char *s2)
     } else {
         return 0;
     }
+}
+
+char to_lower(char c)
+{
+    if (c >= 'A' && c <= 'Z') {
+        return (c - 'A') + 'a';
+    }
+
+    return c;
+}
+
+int strcmp_ignore_case(char *s1, char *s2)
+{
+    while (*s1 != '\0' && *s2 != '\0') {
+        // int diff = *s2 - *s1;
+        char ls1 = to_lower(*s1);
+        char ls2 = to_lower(*s2);
+
+        if (ls2 > ls1) {
+            return -1;
+        } else if (ls1 > ls2) {
+            return 1;
+        }
+
+        s1++;
+        s2++;
+    }
+
+    if (*s1 != '\0') {
+        return -1;
+    }
+
+    if (*s2 != '\0') {
+        return 1;
+    }
+
+    return 0;
 }
 
 void swap(void *v[], int i, int j)
