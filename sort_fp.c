@@ -16,13 +16,31 @@ int main(int argc, char *argv[])
 {
     int nlines;
     int numeric = 0;
+    int reverse = 0;
 
-    if (argc > 1 && strcmp(argv[1], "-n") == 0) {
-        numeric = 1;
+    for (int i = 1; i < argc; i++) {
+        if (argv[i][0] != '-') {
+            printf("invalid input\n");
+            return 1;
+        }
+
+        char *flag = argv[i];
+        while (*(++flag) != '\0') {
+            switch(*flag) {
+                case 'n':
+                    numeric = 1;
+                    break;
+                case 'r':
+                    reverse = 1;
+                    break;
+                default:
+                    printf("invalid input flag\n");
+                    return 1;
+            }
+        }
     }
 
     if ((nlines = readlines(lineptr, MAXLINES)) >= 0) {
-        writelines(lineptr, nlines);
         qsort_((void **) lineptr, 0, nlines - 1, 
             (int (*)(void *, void *))(numeric ? numcmp : strcmp));
         writelines(lineptr, nlines);
@@ -32,6 +50,11 @@ int main(int argc, char *argv[])
         return 1;
     }
 }
+
+// (int *(void *)(void *)) reverse(int (*comp)(void *, void *)) 
+// {
+//     return -1 * (*comp)
+// }
 
 void qsort_(void *v[], int left, int right, int (*comp)(void *, void *))
 {

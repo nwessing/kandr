@@ -13,10 +13,10 @@ int readlines(char *lineptr[], int maxlines)
 
     nlines = 0;
     while ((len = getline_(line, MAXLEN)) > 0) {
-        if (nlines >= maxlines || (p = alloc(len)) == NULL) {
+        if (nlines >= maxlines || (p = alloc(len + 1)) == NULL) {
             return -1;
         } else {
-            line[len-1] = '\0';
+            // line[len-1] = '\0';
             strcpy(p, line);
             lineptr[nlines++] = p;
         }
@@ -40,11 +40,11 @@ int getline_(char s[], int lim)
         s[i] = c;
     }
 
-    if (c == '\n') {
-        s[i] = c;
-        ++i;
+    if (c == '\n' || c == EOF) {
+        s[i] = '\0';
+        // ++i;
     }
 
-    s[i] = '\0';
+    // s[i] = '\0';
     return i;
 }
