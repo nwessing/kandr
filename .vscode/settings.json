@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/*.exe": true,
+        "**/*.obj": true,
+        "**/*.out": true,
+        "**/.DS_Store": true
+    }
+}
